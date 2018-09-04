@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <title>TinyApp Urls currently in use</title>
+    <%- include('partials/_head') %>
+  </head>
+
+  <body>
+
+    <%- include('partials/_header') %>
+
+    <ul>
+      <!-- I need to iterate over the info kept in the 'url database' -->
+
+        <% for (url in urls) { %>
+          <li><%= urls[url] %> : <%= url %></li>
+        <% } %>
+
+    </ul>
+
+    <p>Want to shorten your own url? Follow this link: <a href=#>Click Me</a></p>
+
+  </body>
+
+</html>
