@@ -5,6 +5,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 var path = require('path');
 app.use(express.static(path.join(__dirname, 'static')));
 var PORT = 8080; //default port 8080
+var cookieParser = require('cookie-parser');
+app.use(cookieParser());
 
 function generateRandomString() {
   let randomID = Math.random().toString(36).substring(2, 8);
@@ -35,7 +37,10 @@ var urlDatabase = {
 };
 
 app.get("/", (req, res) => {
-  let templateVars = { urls: urlDatabase};
+  let templateVars = {
+    username: req.cookies["username"],
+    urls: urlDatabase
+  };
   res.render("urls_index", templateVars);
 });
 
@@ -44,11 +49,17 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase};
+  let templateVars = {
+    urls: urlDatabase,
+    username: req.cookies["username"]
+  };
   res.render("urls_index", templateVars);
 });
 
 app.get('/urls/new', (req, res) => {
+  let templateVars = {
+    username: req.cookies["username"]
+  };
   res.render('urls_new');
 });
 
@@ -79,6 +90,7 @@ app.post('/login', (req, res) => {
 
 app.get('/urls/:id', (req, res) => {
   let templateVars = {
+    username: req.cookies["username"],
     shortUrl: req.params.id,
     longUrl: urlDatabase[req.params.id]
   };
