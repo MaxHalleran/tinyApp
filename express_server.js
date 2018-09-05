@@ -36,19 +36,19 @@ app.get('/urls/new', (req, res) => {
 
 app.post('/urls', (req, res) => {
   console.log(req.body);
+  let tempVar = req.body.longUrl;
+  console.log(tempVar);
   res.send('ok');
 });
 
 app.get('urls/:id', (req, res) => {
   let templateVars = {
-    shortURL: req.params.id,
-    longURL: urlDatabase[req.params.id]
+    shortUrl: req.params.id,
+    longUrl: urlDatabase[req.params.id]
   };
   res.render('urls_show', templateVars);
 });
 
-app.post();
-
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`Server listening on port ${PORT}!`);
 });
