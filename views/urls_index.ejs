@@ -16,7 +16,7 @@
         <!-- I need to iterate over the info kept in the 'url database' -->
 
         <% for (url in urls) { %>
-          <li><%= urls[url] %> : <%= url %><a href="/urls/<%= url %>" > Edit</a><%- include('partials/_deleteButton.ejs') %></li>
+          <li><%= urls[url] %> : <%= url %><a href="/urls/<%= url %>" >   Edit</a><%- include('partials/_deleteButton.ejs') %></li>
         <% } %>
 
       </ul>

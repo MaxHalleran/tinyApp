@@ -6,12 +6,14 @@
     <%- include('partials/_styles') %>
   </head>
 
-  <body style='font-size: 20px; padding: 50px;'>
-    <% include partials/_header %>
-    <form action='/urls' method='POST' style='margin-left:150px;'>
-      <label for=longUrl'>Enter a URL:</label>
-      <input id='longUrl' type='text' name='longUrl' placeholder='http://' style='width:300px'>
-      <input type='submit' value='Submit'>
-    </form>
+  <body>
+    <div class='container'>
+      <% include partials/_header %>
+      <form action='/urls' method='POST' style='margin-left:150px;'>
+        <label for=longUrl'>Enter a URL:</label>
+        <input id='longUrl' type='text' name='longUrl' placeholder='http://' style='width:300px'>
+        <input type='submit' value='Submit'>
+      </form>
+    </div>
   </body>
 </html>
