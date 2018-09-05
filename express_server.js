@@ -39,10 +39,10 @@ app.post('/urls', (req, res) => {
   urlDatabase[tempID] = req.body.longUrl;
   res.statusCode = 302;
   res.Location = `http://localhost:8080/urls/${tempID}`;
-  res.redirect(`${req.body.longUrl}`);
+  res.redirect(`http://localhost:8080/urls/${tempID}`);
 });
 
-app.get('urls/:id', (req, res) => {
+app.get('/urls/:id', (req, res) => {
   let templateVars = {
     shortUrl: req.params.id,
     longUrl: urlDatabase[req.params.id]
@@ -50,9 +50,8 @@ app.get('urls/:id', (req, res) => {
   res.render('urls_show', templateVars);
 });
 
-app.get("/u/:shortURL", (req, res) => {
-  let longUrl = urlDatabase[shorturl];
-  res.redirect(longUrl);
+app.get("/u/:shortUrl", (req, res) => {
+  res.redirect(`${urlDatabase[req.params.shortUrl]}`);
 });
 
 app.listen(PORT, () => {
