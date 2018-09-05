@@ -8,15 +8,15 @@
   </head>
 
   <body>
+    <div class='container'>
+      <%- include('partials/_header') %>
 
-    <%- include('partials/_header') %>
-
-    <form action='/urls/<%=shortUrl%>/update' method='POST' style='margin-left:150px;'>
-      <label for=longUrl'><h2>ShortURL: <%= shortUrl %></h2></label>
-      <input id='longUrl' type='text' name='longUrl' placeholder='<%= longUrl %>' style='width:300px; display:block'>
-      <input type='submit' value='Update'>
-    </form>
-
+      <form action='/urls/<%=shortUrl%>/update' method='POST' style='margin-left:150px;'>
+        <label for=longUrl'><h2>ShortURL: <%= shortUrl %></h2></label>
+        <input id='longUrl' type='text' name='longUrl' placeholder='<%= longUrl %>' style='width:300px; display:block'>
+        <input type='submit' value='Update'>
+      </form>
+    </div>
   </body>
 
 </html>
