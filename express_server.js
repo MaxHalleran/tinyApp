@@ -1,10 +1,9 @@
-var express = require('express');
-var app = express();
+const express = require('express');
+const app = express();
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));
-var path = require('path');
-app.use(express.static(path.join(__dirname, 'static')));
-var PORT = 8080; //default port 8080
+const PORT = 8080; //default port 8080
+const cookieParser = require('cookie-parser');
 
 function generateRandomString() {
   let randomID = Math.random().toString(36).substring(2, 8);
@@ -29,7 +28,7 @@ function validateShortUrl(shortUrl) {
 
 app.set("view engine", "ejs");
 
-var urlDatabase = {
+const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xk": "http://www.google.com"
 };
