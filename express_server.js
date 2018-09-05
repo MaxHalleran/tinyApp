@@ -37,7 +37,9 @@ app.get('/urls/new', (req, res) => {
 app.post('/urls', (req, res) => {
   let tempID = generateRandomString();
   urlDatabase[tempID] = req.body.longUrl;
-  res.send('ok');
+  res.statusCode = 302;
+  res.Location = `http://localhost:8080/urls/${tempID}`;
+  res.redirect(`${req.body.longUrl}`);
 });
 
 app.get('urls/:id', (req, res) => {
@@ -46,6 +48,11 @@ app.get('urls/:id', (req, res) => {
     longUrl: urlDatabase[req.params.id]
   };
   res.render('urls_show', templateVars);
+});
+
+app.get("/u/:shortURL", (req, res) => {
+  let longUrl = urlDatabase[shorturl];
+  res.redirect(longUrl);
 });
 
 app.listen(PORT, () => {
