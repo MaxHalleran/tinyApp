@@ -65,6 +65,13 @@ app.post('/urls/:shortUrl/delete', (req, res) => {
   res.redirect(`http://localhost:${PORT}/urls`);
 });
 
+app.post('/urls/:shortUrl/update', (req, res) => {
+  urlDatabase[req.params.shortUrl] = req.body.longUrl;
+  res.statusCode = 302;
+  res.Location = `http://localhost:${PORT}`;
+  res.redirect(`http://localhost:${PORT}`);
+});
+
 app.get('/urls/:id', (req, res) => {
   let templateVars = {
     shortUrl: req.params.id,

@@ -14,7 +14,7 @@
 
     <p><%= shortUrl %> : <%= longUrl %></p>
 
-    <form action='/urls' method='POST' style='margin:150px;'>
+    <form action='/urls/<%=shortUrl%>/update' method='POST' style='margin:150px;'>
       <label for=longUrl'><h3>ShortURL: <%= shortUrl %></h3></label>
       <input id='longUrl' type='text' name='longUrl' placeholder='<%= longUrl %>' style='width:300px'>
       <input type='submit' value='Update'>

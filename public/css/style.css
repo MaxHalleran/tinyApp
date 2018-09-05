@@ -1,0 +1,14 @@
+body {
+  padding-top: 20px;
+  padding-bottom: : 20px;
+  background-color: blue;
+}
+
+header {
+  margin: auto;
+}
+
+header h1 {
+  text-align: center;
+  margin-left: 20%;
+}
