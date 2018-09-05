@@ -9,6 +9,14 @@ function generateRandomString() {
   return randomID;
 }
 
+function validateShortUrl(shortUrl) {
+  if (urlDatabase.hasOwnProperty(`${shortUrl}`)) {
+    return urlDatabase[shortUrl];
+  } else {
+    return `localhost:${PORT}/urls_index`;
+  }
+}
+
 app.set("view engine", "ejs");
 
 var urlDatabase = {
@@ -51,7 +59,8 @@ app.get('/urls/:id', (req, res) => {
 });
 
 app.get("/u/:shortUrl", (req, res) => {
-  res.redirect(`${urlDatabase[req.params.shortUrl]}`);
+  let destination = validateShortUrl(req.params.shortUrl);
+  res.redirect(`${destination}`);
 });
 
 app.listen(PORT, () => {
