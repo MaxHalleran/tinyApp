@@ -13,7 +13,7 @@ function validateShortUrl(shortUrl) {
   if (urlDatabase.hasOwnProperty(`${shortUrl}`)) {
     return urlDatabase[shortUrl];
   } else {
-    return `localhost:${PORT}/urls_index`;
+    return `http://localhost:${PORT}/`;
   }
 }
 
