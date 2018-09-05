@@ -72,6 +72,11 @@ app.post('/urls/:shortUrl/update', (req, res) => {
   res.redirect(`http://localhost:${PORT}`);
 });
 
+app.post('/login', (req, res) => {
+  res.cookie('username', req.body.username);
+  res.redirect('/urls');
+});
+
 app.get('/urls/:id', (req, res) => {
   let templateVars = {
     shortUrl: req.params.id,
