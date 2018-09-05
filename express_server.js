@@ -9,11 +9,19 @@ function generateRandomString() {
   return randomID;
 }
 
-function validateShortUrl(shortUrl) {
+function validateRedirect(shortUrl) {
   if (urlDatabase.hasOwnProperty(`${shortUrl}`)) {
     return urlDatabase[shortUrl];
   } else {
     return `http://localhost:${PORT}/`;
+  }
+}
+
+function validateShortUrl(shortUrl) {
+  if (!urlDatabase.hasOwnProperty(`${shortUrl}`)) {
+    return urlDatabase[shortUrl];
+  } else {
+    return validateShortUrl(generateRandomString());
   }
 }
 
@@ -47,7 +55,12 @@ app.post('/urls', (req, res) => {
   urlDatabase[tempID] = req.body.longUrl;
   res.statusCode = 302;
   res.Location = `http://localhost:8080/urls/${tempID}`;
-  res.redirect(`http://localhost:8080/urls/${tempID}`);
+  res.redirect(`http://localhost:${PORT}/urls/${tempID}`);
+});
+
+app.post('/urls/:shortUrl/delete', (req, res) => {
+  delete urlDatabase[req.params.shortUrl];
+  res.redirect(`http://localhost:${PORT}`);
 });
 
 app.get('/urls/:id', (req, res) => {
@@ -59,7 +72,7 @@ app.get('/urls/:id', (req, res) => {
 });
 
 app.get("/u/:shortUrl", (req, res) => {
-  let destination = validateShortUrl(req.params.shortUrl);
+  let destination = validateRedirect(req.params.shortUrl);
   res.redirect(`${destination}`);
 });
 

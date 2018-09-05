@@ -7,20 +7,22 @@
   </head>
 
   <body>
+    <div class="container">
 
-    <%- include('partials/_header') %>
+      <%- include('partials/_header') %>
 
-    <ul>
-      <!-- I need to iterate over the info kept in the 'url database' -->
+      <ul>
+        <!-- I need to iterate over the info kept in the 'url database' -->
 
         <% for (url in urls) { %>
-          <li><%= urls[url] %> : <%= url %></li>
+          <li><%= urls[url] %> : <%= url %> <%- include('partials/_deleteButton.ejs') %></li>
         <% } %>
 
-    </ul>
+      </ul>
 
-    <p>Want to shorten your own url? Follow this link: <a href="/urls/new">Click Me</a></p>
+      <p>Want to shorten your own url? Follow this link: <a href="/urls/new"><button type="button" class="btn btn-primary">Click Here</button></a></p>
 
+    </div>
   </body>
 
 </html>
