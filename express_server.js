@@ -2,6 +2,8 @@ var express = require('express');
 var app = express();
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));
+var path = require('path');
+app.use(express.static(path.join(__dirname, 'static')));
 var PORT = 8080; //default port 8080
 
 function generateRandomString() {
@@ -60,7 +62,7 @@ app.post('/urls', (req, res) => {
 
 app.post('/urls/:shortUrl/delete', (req, res) => {
   delete urlDatabase[req.params.shortUrl];
-  res.redirect(`http://localhost:${PORT}`);
+  res.redirect(`http://localhost:${PORT}/urls`);
 });
 
 app.get('/urls/:id', (req, res) => {
