@@ -35,6 +35,14 @@ function validateID(ID, database) {
   }
 }
 
+function setTemplateVars(cookie) {
+  if (cookie === undefined) {
+    return "";
+  } else {
+    return usersDatabase[cookie.id];
+  }
+}
+
 app.set("view engine", "ejs");
 
 const urlDatabase = {
@@ -55,7 +63,7 @@ app.get('/register', (req, res) => {
   let retry = (req.statusCode)
   console.log('Working on register')
   let templateVars = {
-    username: req.cookies.username
+    user_id: setTemplateVars(req.cookies.user_id)
   }
   res.render('register',templateVars);
 });
@@ -71,14 +79,14 @@ app.post('/register', (req, res) => {
       email: req.body.email,
       password: req.body.password
     }
-      res.cookie('userId', usersDatabase[tempID]);
+      res.cookie('user_id', usersDatabase[tempID]);
       res.redirect('/urls');
   }
 });
 
 app.get("/", (req, res) => {
   let templateVars = {
-    username: req.cookies.username,
+    user_id: setTemplateVars(req.cookies.user_id),
     urls: urlDatabase
   };
   res.render("urls_index", templateVars);
@@ -91,14 +99,14 @@ app.get("/urls.json", (req, res) => {
 app.get("/urls", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
-    username: req.cookies.username
+    user_id: setTemplateVars(req.cookies.user_id)
   };
   res.render("urls_index", templateVars);
 });
 
 app.get('/urls/new', (req, res) => {
   let templateVars = {
-    username: req.cookies.username
+    user_id: setTemplateVars(req.cookies.user_id)
   };
   res.render('urls_new', templateVars);
 });
@@ -135,7 +143,7 @@ app.post('/logout', (req, res) => {
 
 app.get('/urls/:id', (req, res) => {
   let templateVars = {
-    username: req.cookies.username,
+    user_id: setTemplateVars(req.cookies.user_id),
     shortUrl: req.params.id,
     longUrl: urlDatabase[req.params.id]
   };
