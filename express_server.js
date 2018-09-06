@@ -37,10 +37,21 @@ function validateID(ID, database) {
 
 function setTemplateVars(cookie) {
   if (cookie === undefined) {
-    return "";
+    return false;
   } else {
-    return usersDatabase[cookie.id];
+    return (usersDatabase.find(u => u.id === cookie.id));
   }
+}
+
+function validateLogin(username, password) {
+  const realUser = (usersDatabase.find(u => u.username === username) || '');
+  if (realUser === '') {
+    return false;
+  }
+  if (realUser.password === password) {
+    return realUser;
+  }
+  return false;
 }
 
 app.set("view engine", "ejs");
@@ -61,7 +72,7 @@ const usersDatabase = [
 
 app.get('/register', (req, res) => {
   let retry = (req.statusCode)
-  console.log('Working on register')
+  console.log('Working on register');
   let templateVars = {
     user_id: setTemplateVars(req.cookies.user_id)
   }
@@ -91,6 +102,24 @@ app.get("/", (req, res) => {
   };
   res.render("urls_index", templateVars);
 });
+
+app.get('/login', (req, res) => {
+  let templateVars = {
+    user_id: setTemplateVars(req.cookies.user_id)
+  };
+  res.render('login', templateVars);
+});
+
+app.post('/login', (req, res) => {
+  let login = validateLogin(req.body.username, req.body.password);
+  if (!login) {
+    res.redirect(403, '/login');
+  } else {
+    res.cookie('user_id', login);
+    res.redirect('/');
+  }
+});
+
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
@@ -131,13 +160,8 @@ app.post('/urls/:shortUrl/update', (req, res) => {
   res.redirect(`http://localhost:${PORT}`);
 });
 
-app.post('/login', (req, res) => {
-  res.cookie('username', req.body.username);
-  res.redirect('/urls');
-});
-
-app.post('/logout', (req, res) => {
-  res.clearCookie('username');
+app.get('/logout', (req, res) => {
+  res.clearCookie('user_id');
   res.redirect('/urls');
 });
 

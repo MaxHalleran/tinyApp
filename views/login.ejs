@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <title>TinyApp Log In Page</title>
+    <%- include('partials/_head') %>
+    <%- include('partials/_styles') %>
+  </head>
+
+  <!-- Should redirect back here and populate the form with input values if there was a rejection -->
+
+  <body>
+    <div class="container register">
+
+      <%- include('partials/_header') %>
+
+      <form action='/Login' method='POST' style='margin-left:150px;'>
+        <label class='regForm' for='email'>Enter your username and password to log in</label>
+        <input class='regForm' id='username' type='text' name='username' placeholder='Username' style='width:300px'>
+        <input class='regForm' id='password' type=' password' name='password' placeholder='*****' style='width:300px'>
+        <input class='regForm' type='submit' value='Log In'>
+      </form>
+
+    </div>
+  </body>
+
+</html>
