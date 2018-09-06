@@ -19,11 +19,19 @@ function validateRedirect(shortUrl) {
   }
 }
 
-function validateShortUrl(shortUrl) {
-  if (!urlDatabase.hasOwnProperty(`${shortUrl}`)) {
-    return urlDatabase[shortUrl];
+function validateNumber(ID, database) {
+  if (!validateID(ID, database)) {
+    validateNumber(generateRandomString(), database);
   } else {
-    return validateShortUrl(generateRandomString());
+    return ID;
+  }
+}
+
+function validateID(ID, database) {
+  if (!(database.hasOwnProperty(`${ID}`))) {
+    return ID;
+  } else {
+    return false;
   }
 }
 
@@ -34,9 +42,51 @@ const urlDatabase = {
   "9sm5xk": "http://www.google.com"
 };
 
+const usersDatabase = [
+  hxtg7r = {
+    id: 'hxtg7r',
+    username: 'Max',
+    email: 'maxhalleran@gmail.com',
+    password: 'google'
+  }
+];
+
+app.get('/register', (req, res) => {
+  let retry = (req.statusCode)
+  console.log('Working on register')
+  let templateVars = {
+    username: req.cookies.username
+  }
+  res.render('register',templateVars);
+});
+
+app.post('/register', (req, res) => {
+
+  //check to see if the email is in use or has any empty strings and if so return a 400 status
+  if ((req.body.email === "" || req.body.username === "" || req.body.password === "") || usersDatabase.find(u => u.email === req.body.email)) {
+
+    //if it is, bring the user back to the register page and tell them that the email already has an account
+    res.redirect(400, '/register');
+  } else {
+
+    //otherwise create a new user in the userdatabase with their unique id, their email and their password
+    let tempID = validateNumber(generateRandomString(), usersDatabase);
+    usersDatabase[tempID] = {
+      id: tempID,
+      username: req.body.username,
+      email: req.body.email,
+      password: req.body.password
+    }
+
+    //set the cookie to the current user and redirect the user back to the front page
+    res.cookie('username', req.body.username);
+    res.redirect('/urls');
+  }
+});
+
 app.get("/", (req, res) => {
   let templateVars = {
-    username: req.cookies["username"],
+    username: req.cookies.username,
     urls: urlDatabase
   };
   res.render("urls_index", templateVars);
@@ -49,20 +99,20 @@ app.get("/urls.json", (req, res) => {
 app.get("/urls", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
-    username: req.cookies["username"]
+    username: req.cookies.username
   };
   res.render("urls_index", templateVars);
 });
 
 app.get('/urls/new', (req, res) => {
   let templateVars = {
-    username: req.cookies["username"]
+    username: req.cookies.username
   };
   res.render('urls_new', templateVars);
 });
 
 app.post('/urls', (req, res) => {
-  let tempID = generateRandomString();
+  let tempID = validateNumber(generateRandomString(), urlDatabase);
   urlDatabase[tempID] = req.body.longUrl;
   res.statusCode = 302;
   res.Location = `http://localhost:8080/urls/${tempID}`;
@@ -93,7 +143,7 @@ app.post('/logout', (req, res) => {
 
 app.get('/urls/:id', (req, res) => {
   let templateVars = {
-    username: req.cookies["username"],
+    username: req.cookies.username,
     shortUrl: req.params.id,
     longUrl: urlDatabase[req.params.id]
   };
