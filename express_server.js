@@ -61,15 +61,9 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
-
-  //check to see if the email is in use or has any empty strings and if so return a 400 status
   if ((req.body.email === "" || req.body.username === "" || req.body.password === "") || usersDatabase.find(u => u.email === req.body.email)) {
-
-    //if it is, bring the user back to the register page and tell them that the email already has an account
     res.redirect(400, '/register');
   } else {
-
-    //otherwise create a new user in the userdatabase with their unique id, their email and their password
     let tempID = validateNumber(generateRandomString(), usersDatabase);
     usersDatabase[tempID] = {
       id: tempID,
@@ -77,10 +71,8 @@ app.post('/register', (req, res) => {
       email: req.body.email,
       password: req.body.password
     }
-
-    //set the cookie to the current user and redirect the user back to the front page
-    res.cookie('username', req.body.username);
-    res.redirect('/urls');
+      res.cookie('userId', usersDatabase[tempID]);
+      res.redirect('/urls');
   }
 });
 
