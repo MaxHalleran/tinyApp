@@ -1,10 +1,28 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const PORT = 8080; //default port 8080
+const cookieSession = require('cookie-session');
+const bcrypt = require('bcrypt');
+
 app.use(bodyParser.urlencoded({extended: true}));
-var PORT = 8080; //default port 8080
-var cookieParser = require('cookie-parser');
-app.use(cookieParser());
+
+app.use(cookieSession({
+  name: 'session',
+  keys: ['suppalightohousegottariot'],
+
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
+
+function logStatus(cookies) {
+  //return true or false if the user is logged in
+  if (cookies.user_id == undefined) {
+    return false;
+  } else {
+    return true;
+  }
+}
 
 function generateRandomString() {
   let randomID = Math.random().toString(36).substring(2, 8);
@@ -44,14 +62,30 @@ function setTemplateVars(cookie) {
 }
 
 function validateLogin(username, password) {
-  const realUser = (usersDatabase.find(u => u.username === username) || '');
+  const realUser = (usersDatabase.find(u => u.username === username)) || '';
   if (realUser === '') {
     return false;
   }
-  if (realUser.password === password) {
+  //validate bcrypt password
+  if (bcrypt.compareSync(password, realUser.password)) {
     return realUser;
   }
   return false;
+}
+
+function isOwner(shortUrl, ID) {
+  let userCollection = (usersDatabase.find(u => u.id === ID).collection);
+  return (userCollection.find(u => u === shortUrl) && true);
+}
+
+function urlsForUser(ID) {
+  console.log(ID);
+  const urlCollection = usersDatabase.find(u => u.id === ID).collection;
+  let urlpairs = {};
+  for (let short of urlCollection) {
+    urlpairs[short] = urlDatabase[short];
+  }
+  return urlpairs;
 }
 
 app.set("view engine", "ejs");
@@ -66,15 +100,20 @@ const usersDatabase = [
     id: 'hxtg7r',
     username: 'Max',
     email: 'maxhalleran@gmail.com',
-    password: 'google'
+    password: bcrypt.hashSync('google', 10),
+    collection: ["b2xVn2", "9sm5xk"]
   }
 ];
 
 app.get('/register', (req, res) => {
+  if (logStatus(req.session)) {
+    res.redirect('/');
+  }
   let retry = (req.statusCode)
   console.log('Working on register');
   let templateVars = {
-    user_id: setTemplateVars(req.cookies.user_id)
+    logStat: logStatus(req.session),
+    user_id: setTemplateVars(req.session.user_id)
   }
   res.render('register',templateVars);
 });
@@ -84,28 +123,34 @@ app.post('/register', (req, res) => {
     res.redirect(400, '/register');
   } else {
     let tempID = validateNumber(generateRandomString(), usersDatabase);
-    usersDatabase[tempID] = {
+    usersDatabase.push({
       id: tempID,
       username: req.body.username,
       email: req.body.email,
-      password: req.body.password
-    }
-      res.cookie('user_id', usersDatabase[tempID]);
-      res.redirect('/urls');
+      password: bcrypt.hashSync(req.body.password, 10),
+      collection: []
+    });
+    req.session.user_id = usersDatabase.find(u => u.id === tempID);
+    res.redirect('/urls');
   }
 });
 
 app.get("/", (req, res) => {
   let templateVars = {
-    user_id: setTemplateVars(req.cookies.user_id),
-    urls: urlDatabase
+    logStat: logStatus(req.session),
+    user_id: setTemplateVars(req.session.user_id),
+    urls: (logStatus(req.session) ? urlsForUser(req.session.user_id.id) : [] )
   };
   res.render("urls_index", templateVars);
 });
 
 app.get('/login', (req, res) => {
+  if (logStatus(req.session)) {
+    res.redirect('/');
+  }
   let templateVars = {
-    user_id: setTemplateVars(req.cookies.user_id)
+    logStat: logStatus(req.session),
+    user_id: setTemplateVars(req.session.user_id)
   };
   res.render('login', templateVars);
 });
@@ -115,63 +160,92 @@ app.post('/login', (req, res) => {
   if (!login) {
     res.redirect(403, '/login');
   } else {
-    res.cookie('user_id', login);
+    req.session.user_id = login;
     res.redirect('/');
   }
 });
-
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
 app.get("/urls", (req, res) => {
+  console.log(req.session);
   let templateVars = {
-    urls: urlDatabase,
-    user_id: setTemplateVars(req.cookies.user_id)
+    logStat: logStatus(req.session),
+    user_id: setTemplateVars(req.session.user_id),
+    urls: (logStatus(req.session) ? urlsForUser(req.session.user_id.id) : [] )
   };
   res.render("urls_index", templateVars);
 });
 
 app.get('/urls/new', (req, res) => {
-  let templateVars = {
-    user_id: setTemplateVars(req.cookies.user_id)
-  };
-  res.render('urls_new', templateVars);
+  if (!logStatus(req.session)) {
+    res.redirect('/');
+  } else {
+    let templateVars = {
+      logStat: logStatus(req.session),
+      user_id: setTemplateVars(req.session.user_id)
+    }
+    res.render('urls_new', templateVars);
+  }
 });
 
-app.post('/urls', (req, res) => {
-  let tempID = validateNumber(generateRandomString(), urlDatabase);
-  urlDatabase[tempID] = req.body.longUrl;
-  res.statusCode = 302;
-  res.Location = `http://localhost:8080/urls/${tempID}`;
-  res.redirect(`http://localhost:${PORT}/urls/${tempID}`);
+app.post('/urls/new', (req, res) => {
+  if (!logStatus(req.session)) {
+    res.redirect('/register');
+  } else {
+    let tempID = validateNumber(generateRandomString(), urlDatabase);
+    urlDatabase[tempID] = req.body.longUrl;
+    usersDatabase[usersDatabase.findIndex(u => u.id === req.session.user_id.id)].collection.push(tempID);
+    res.Location = `http://localhost:8080/urls/${tempID}`;
+    res.redirect(`http://localhost:${PORT}/urls/${tempID}`);
+  }
 });
 
 app.post('/urls/:shortUrl/delete', (req, res) => {
-  delete urlDatabase[req.params.shortUrl];
-  res.redirect(`http://localhost:${PORT}/urls`);
+  if (logStatus(!req.session)) {
+    res.redirect(400, '/');
+  }
+  if (isOwner(req.params.shortUrl, req.session.user_id.id)) {
+    let index = usersDatabase[usersDatabase.findIndex(u => u.id === req.session.user_id.id)].collection.findIndex(e => e === req.params.shortUrl);
+    usersDatabase[usersDatabase.findIndex(u => u.id === req.session.user_id.id)].collection.splice(index, 1);
+    delete urlDatabase[req.params.shortUrl];
+    res.redirect(`http://localhost:${PORT}/urls`);
+  } else {
+    res.redirect(400, '/');
+  }
 });
 
 app.post('/urls/:shortUrl/update', (req, res) => {
-  urlDatabase[req.params.shortUrl] = req.body.longUrl;
-  res.statusCode = 302;
-  res.Location = `http://localhost:${PORT}`;
-  res.redirect(`http://localhost:${PORT}`);
+  if (isOwner(req.params.shortUrl, req.session.user_id.id)) {
+    urlDatabase[req.params.shortUrl] = req.body.longUrl;
+    res.Location = `http://localhost:${PORT}`;
+    res.redirect(`http://localhost:${PORT}`);
+  } else {
+    res.redirect(400, '/');
+  }
 });
 
 app.get('/logout', (req, res) => {
-  res.clearCookie('user_id');
+  req.session = null;
   res.redirect('/urls');
 });
 
 app.get('/urls/:id', (req, res) => {
-  let templateVars = {
-    user_id: setTemplateVars(req.cookies.user_id),
-    shortUrl: req.params.id,
-    longUrl: urlDatabase[req.params.id]
-  };
-  res.render('urls_show', templateVars);
+  if (!logStatus(req.session)) {
+    res.redirect('/');
+  } else if (isOwner(req.params.id, req.session.user_id.id)) {
+    let templateVars = {
+      logStat: logStatus(req.session),
+      user_id: setTemplateVars(req.session.user_id),
+      shortUrl: req.params.id,
+      longUrl: urlDatabase[req.params.id]
+    };
+    res.render('urls_show', templateVars);
+  } else {
+    res.redirect('/');
+  }
 });
 
 app.get("/u/:shortUrl", (req, res) => {
