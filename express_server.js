@@ -16,7 +16,6 @@ app.use(cookieSession({
 }))
 
 function logStatus(cookies) {
-  //return true or false if the user is logged in
   if (cookies.user_id == undefined) {
     return false;
   } else {
@@ -57,7 +56,7 @@ function setTemplateVars(cookie) {
   if (cookie === undefined) {
     return false;
   } else {
-    return (usersDatabase.find(u => u.id === cookie.id));
+    return (usersDatabase.find(u => u.id === cookie));
   }
 }
 
@@ -66,26 +65,25 @@ function validateLogin(username, password) {
   if (realUser === '') {
     return false;
   }
-  //validate bcrypt password
   if (bcrypt.compareSync(password, realUser.password)) {
-    return realUser;
+    return realUser.id;
   }
   return false;
 }
 
 function isOwner(shortUrl, ID) {
-  let userCollection = (usersDatabase.find(u => u.id === ID).collection);
+  let userCollection = (usersDatabase.find(u => u.id === ID)).collection;
   return (userCollection.find(u => u === shortUrl) && true);
 }
 
 function urlsForUser(ID) {
-  console.log(ID);
-  const urlCollection = usersDatabase.find(u => u.id === ID).collection;
+  const urlCollection = (usersDatabase.find(u => u.id === ID)).collection;
   let urlpairs = {};
   for (let short of urlCollection) {
     urlpairs[short] = urlDatabase[short];
   }
   return urlpairs;
+
 }
 
 app.set("view engine", "ejs");
@@ -130,29 +128,29 @@ app.post('/register', (req, res) => {
       password: bcrypt.hashSync(req.body.password, 10),
       collection: []
     });
-    req.session.user_id = usersDatabase.find(u => u.id === tempID);
+    req.session.user_id = tempID;
     res.redirect('/urls');
   }
 });
 
 app.get("/", (req, res) => {
-  let templateVars = {
-    logStat: logStatus(req.session),
-    user_id: setTemplateVars(req.session.user_id),
-    urls: (logStatus(req.session) ? urlsForUser(req.session.user_id.id) : [] )
-  };
-  res.render("urls_index", templateVars);
+  if (logStatus(req.session)) {
+    res.redirect('/urls');
+  } else {
+    res.redirect('/login');
+  }
 });
 
 app.get('/login', (req, res) => {
   if (logStatus(req.session)) {
     res.redirect('/');
+  } else {
+    let templateVars = {
+      logStat: false,
+      user_id: false
+    };
+    res.render('login', templateVars);
   }
-  let templateVars = {
-    logStat: logStatus(req.session),
-    user_id: setTemplateVars(req.session.user_id)
-  };
-  res.render('login', templateVars);
 });
 
 app.post('/login', (req, res) => {
@@ -170,13 +168,16 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  console.log(req.session);
-  let templateVars = {
-    logStat: logStatus(req.session),
-    user_id: setTemplateVars(req.session.user_id),
-    urls: (logStatus(req.session) ? urlsForUser(req.session.user_id.id) : [] )
-  };
-  res.render("urls_index", templateVars);
+  if (logStatus(req.session)) {
+    let templateVars = {
+      logStat: logStatus(req.session),
+      user_id: setTemplateVars(req.session.user_id),
+      urls: urlsForUser(req.session.user_id)
+    };
+    res.render("urls_index", templateVars);
+  } else {
+  res.redirect('/login');
+}
 });
 
 app.get('/urls/new', (req, res) => {
@@ -197,7 +198,8 @@ app.post('/urls/new', (req, res) => {
   } else {
     let tempID = validateNumber(generateRandomString(), urlDatabase);
     urlDatabase[tempID] = req.body.longUrl;
-    usersDatabase[usersDatabase.findIndex(u => u.id === req.session.user_id.id)].collection.push(tempID);
+    (usersDatabase[usersDatabase.findIndex(u => u.id === req.session.user_id)].collection).push(tempID);
+    console.log(usersDatabase[usersDatabase.findIndex(u => u.id === req.session.user_id)].collection);
     res.Location = `http://localhost:8080/urls/${tempID}`;
     res.redirect(`http://localhost:${PORT}/urls/${tempID}`);
   }
@@ -207,9 +209,9 @@ app.post('/urls/:shortUrl/delete', (req, res) => {
   if (logStatus(!req.session)) {
     res.redirect(400, '/');
   }
-  if (isOwner(req.params.shortUrl, req.session.user_id.id)) {
-    let index = usersDatabase[usersDatabase.findIndex(u => u.id === req.session.user_id.id)].collection.findIndex(e => e === req.params.shortUrl);
-    usersDatabase[usersDatabase.findIndex(u => u.id === req.session.user_id.id)].collection.splice(index, 1);
+  if (isOwner(req.params.shortUrl, req.session.user_id)) {
+    let index = usersDatabase[usersDatabase.findIndex(u => u.id === req.session.user_id)].collection.findIndex(e => e === req.params.shortUrl);
+    usersDatabase[usersDatabase.findIndex(u => u.id === req.session.user_id)].collection.splice(index, 1);
     delete urlDatabase[req.params.shortUrl];
     res.redirect(`http://localhost:${PORT}/urls`);
   } else {
@@ -218,7 +220,7 @@ app.post('/urls/:shortUrl/delete', (req, res) => {
 });
 
 app.post('/urls/:shortUrl/update', (req, res) => {
-  if (isOwner(req.params.shortUrl, req.session.user_id.id)) {
+  if (isOwner(req.params.shortUrl, req.session.user_id)) {
     urlDatabase[req.params.shortUrl] = req.body.longUrl;
     res.Location = `http://localhost:${PORT}`;
     res.redirect(`http://localhost:${PORT}`);
@@ -235,7 +237,7 @@ app.get('/logout', (req, res) => {
 app.get('/urls/:id', (req, res) => {
   if (!logStatus(req.session)) {
     res.redirect('/');
-  } else if (isOwner(req.params.id, req.session.user_id.id)) {
+  } else if (isOwner(req.params.id, req.session.user_id)) {
     let templateVars = {
       logStat: logStatus(req.session),
       user_id: setTemplateVars(req.session.user_id),

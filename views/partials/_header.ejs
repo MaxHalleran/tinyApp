@@ -3,7 +3,7 @@
     <div class='login'>
     <% if (!user_id === false) { %>
       <form action='/logout' method='GET'>
-        <label for=username'><%= user_id.username %></label>
+        <label for=username'><%= user_id.email %></label>
         <input type='submit' value='Log Out'>
       </form>
     <% } else { %>

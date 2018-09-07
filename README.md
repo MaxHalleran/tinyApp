@@ -1,14 +1,35 @@
-# Tiny App - Link Shortener
+# Tiny App - Link Shortener v0.9.0
 
-This is an application that allows you to organize and edit shortened links.
+Tiny App is a full stack web application built with Node and Express that allows users to shorten long url's.
 
-## Current development
+## Final project
 
-Currently I am adding:
+This section is currently under development as we're fixing up the last few bugs
 
--Personalized links, allowing links to be 'owned' by a user who can edit and delete them while allowing other users the ability to still use the shortened link.
+## Dependencies
 
-## Current function:
+-Node.js
+-Express
+-EJS
+-bcrypt
+-body-parser
+-cookie-session
+-bootstrap
+
+## Getting Started
+
+-Install all dependencies(using the `npm install` command).
+-Run the development web server using the `node express_server.js` command or the npm start command.
+
+## Dev log
+
+v0.9.1-Updated the site to better handle cookies with an improper id and increased functionality of page redirection
+
+v0.9.0-Changed the cookies used to session cookies and added password hashing.
+
+## Current focus
 
 -Routing: moving all my routes to a seperate file
--Module: moving all my server functionality to a seperate file to keep it discrete and clean
+-Modules: moving all my server functionality to a seperate file to keep it discrete and clean
+-Applying the REST philosophy to the application
+-Cookie tracker: a field to keep track of how many (possibly unique) visits a short link has had
