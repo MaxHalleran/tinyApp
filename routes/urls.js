@@ -41,7 +41,6 @@ router.post('/new', (req, res) => {
     let tempID = utility.validateNumber(utility.generateRandomString(), urlDatabase);
     urlDatabase[tempID] = req.body.longUrl;
     (usersDatabase[usersDatabase.findIndex(u => u.id === req.session.user_id)].collection).push(tempID);
-    console.log(usersDatabase[usersDatabase.findIndex(u => u.id === req.session.user_id)].collection);
     res.Location = `http://localhost:8080/urls/${tempID}`;
     res.redirect(`http://localhost:${PORT}/urls/${tempID}`);
   }

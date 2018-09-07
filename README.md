@@ -23,6 +23,8 @@ This section is currently under development as we're fixing up the last few bugs
 
 ## Dev log
 
+v0.9.2-Cleaned up the code and organized it into seperate, easier to read files and folders.
+
 v0.9.1-Updated the site to better handle cookies with an improper id and increased functionality of page redirection
 
 v0.9.0-Changed the cookies used to session cookies and added password hashing.
@@ -30,8 +32,6 @@ v0.9.0-Changed the cookies used to session cookies and added password hashing.
 ## Current focus
 
 -Adding dynamic html partial functionality
--Routing: moving all my routes to a seperate file
--Modules: moving all my server functionality to a seperate file to keep it discrete and clean
 -Applying the REST philosophy to the application
 -Cookie tracker: a field to keep track of how many (possibly unique) visits a short link has had
 
