@@ -29,7 +29,12 @@ v0.9.0-Changed the cookies used to session cookies and added password hashing.
 
 ## Current focus
 
+-Adding dynamic html partial functionality
 -Routing: moving all my routes to a seperate file
 -Modules: moving all my server functionality to a seperate file to keep it discrete and clean
 -Applying the REST philosophy to the application
 -Cookie tracker: a field to keep track of how many (possibly unique) visits a short link has had
+
+## Minor bugs
+
+-Clicking the login button on the login page returns an error
