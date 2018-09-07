@@ -12,14 +12,24 @@
 
       <%- include('partials/_header') %>
 
-      <ul>
-        <!-- I need to iterate over the info kept in the 'url database' -->
+      <% if (logStat) { %>
 
-        <% for (url in urls) { %>
-          <li><%= urls[url] %> : <%= url %><a href="/urls/<%= url %>" >   Edit</a><%- include('partials/_deleteButton.ejs') %></li>
-        <% } %>
+        <ul>
+          <!-- I need to iterate over the info kept in the 'url database' and only show an edit/delete button -->
 
-      </ul>
+          <% for (url in urls) { %>
+            <li><%= urls[url] %> : <%= url %><a href="/urls/<%= url %>" >   Edit</a><%- include('partials/_deleteButton.ejs') %></li>
+          <% } %>
+
+
+         </ul>
+
+      <% } else { %>
+      <form action='/register' method='GET'>
+        <input type='submit' value='Register'>
+      </form>
+      <% } %>
+
 
       <p>Want to shorten your own url? Follow this link: <a href="/urls/new"><button type="button" class="btn btn-primary">Click Here</button></a></p>
 
