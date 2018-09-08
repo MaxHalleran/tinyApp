@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <title>Tiny App</title>
+    <%- include('partials/_head') %>
+    <%- include('partials/_styles') %>
+  </head>
+
+  <body>
+    <div class="container">
+
+      <%- include('partials/_header') %>
+
+      <% if (error === 'noUrl') { %>
+
+      <h3>Unfortunately that wasn't a valid link... A second try couldn't hurt !</h3>
+
+      <% } else if (error === 'invalidLogin') { %>
+
+      <h3>Hey there, bud. Looks like something's off with your credentials. Wanna give it a second shot?</h3>
+
+      <form action='/login' method='GET'>
+        <input type='submit' value='Log In'>
+      </form>
+
+      <% } else if (error === 'invalidEmail') { %>
+
+      <h3>So... we know this guy, right, and he's cool and all but... he's already signed up with your email. You should check that out...</h3>
+
+      <form action='/register' method='GET'>
+        <input type='submit' value='Register'>
+      </form>
+
+      <% } %>
+
+
+    </div>
+  </body>
+
+</html>

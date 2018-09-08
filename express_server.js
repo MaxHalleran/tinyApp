@@ -36,8 +36,9 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
-  if ((req.body.email === "" || req.body.username === "" || req.body.password === "") || usersDatabase.find(u => u.email === req.body.email)) {
-    res.redirect(400, '/register');
+  console.log(usersDatabase.find(u => u.email === req.body.email));
+  if ((req.body.email === "" || req.body.username === "" || req.body.password === "") || !(usersDatabase.find(u => u.email === req.body.email))) {
+    res.redirect('/error/invalidEmail');
   } else {
     let tempID = utility.validateNumber(utility.generateRandomString(), usersDatabase);
     usersDatabase.push({
@@ -60,6 +61,15 @@ app.get("/", (req, res) => {
   }
 });
 
+app.get('/error/:error', (req, res) => {
+  let templateVars = {
+    logStat: utility.logStatus(req.session),
+    user_id: utility.setTemplateVars(req.session.user_id, usersDatabase),
+    error: req.params.error
+  };
+  res.render('error', templateVars);
+});
+
 app.get('/login', (req, res) => {
   if (utility.logStatus(req.session)) {
     res.redirect('/');
@@ -75,7 +85,7 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
   let login = utility.validateLogin(req.body.username, req.body.password, usersDatabase);
   if (!login) {
-    res.redirect(403, '/login');
+    res.redirect('/error/invalidLogin');
   } else {
     req.session.user_id = login;
     res.redirect('/');

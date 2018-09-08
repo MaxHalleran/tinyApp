@@ -31,10 +31,9 @@ v0.9.0-Changed the cookies used to session cookies and added password hashing.
 
 ## Current focus
 
--Adding dynamic html partial functionality
+-Adding dynamic html error functionality
+-Prettying up the program, move the style partial to a css file and properly format the application with bootstrap
 -Applying the REST philosophy to the application
 -Cookie tracker: a field to keep track of how many (possibly unique) visits a short link has had
-
-## Minor bugs
-
--Clicking the login button on the login page returns an error
+-Cookie checking, check the cookie against the database and clear if it isn't present
+-error checking, in templateVars add an error field that gets filled in if there's an error

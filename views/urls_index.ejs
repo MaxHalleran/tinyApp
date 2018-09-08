@@ -18,7 +18,7 @@
           <!-- I need to iterate over the info kept in the 'url database' and only show an edit/delete button -->
 
           <% for (url in urls) { %>
-            <li><%= urls[url] %> : <%= url %><a href="/urls/<%= url %>" >   Edit</a><%- include('partials/_deleteButton.ejs') %></li>
+            <li><a href="<%= urls[url] %>"><%= urls[url] %> : <%= url %></a><a href="/urls/<%= url %>" >   Edit</a><%- include('partials/_deleteButton.ejs') %></li>
           <% } %>
 
 
