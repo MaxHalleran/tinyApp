@@ -2,7 +2,7 @@
 <html lang="en">
 
   <head>
-    <title>TinyApp Urls currently in use</title>
+    <title>TinyApp</title>
     <%- include('partials/_head') %>
     <%- include('partials/_styles') %>
   </head>
@@ -15,12 +15,10 @@
       <% if (logStat) { %>
 
         <ul>
-          <!-- I need to iterate over the info kept in the 'url database' and only show an edit/delete button -->
 
           <% for (url in urls) { %>
             <li><a href="<%= urls[url] %>"><%= urls[url] %> : <%= url %></a><a href="/urls/<%= url %>" >   Edit</a><%- include('partials/_deleteButton.ejs') %></li>
           <% } %>
-
 
          </ul>
 
@@ -30,7 +28,6 @@
         <input type='submit' value='Register'>
       </form>
       <% } %>
-
 
       <p>Want to shorten your own url? Follow this link: <a href="/urls/new"><button type="button" class="btn btn-primary">Click Here</button></a></p>
 
