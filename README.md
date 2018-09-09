@@ -19,10 +19,13 @@ This section is currently under development as we're fixing up the last few bugs
 
 ## Getting Started
 
--Install all dependencies(using the `npm install` command).
--Run the development web server using the `node express_server.js` command or the npm start command.
+-Clone TinyApp using github
+-Install all dependencies using the `npm install` command
+-Run the web server by typing `npm start` on the command line while in the TinyApp folder
 
 ## Dev log
+
+v1.0.0-TinyApp is now fully functioning and ready for release
 
 v0.9.4-Tested each feature and removed any debugging code left over
 
@@ -36,9 +39,5 @@ v0.9.0-Changed the cookies used to session cookies and added password hashing.
 
 ## Current focus
 
--Adding dynamic html error functionality
--Prettying up the program, move the style partial to a css file and properly format the application with bootstrap
--Applying the REST philosophy to the application
+-Prettying up the program, move the style partial to a css file
 -Cookie tracker: a field to keep track of how many (possibly unique) visits a short link has had
--Cookie checking, check the cookie against the database and clear if it isn't present
--error checking, in templateVars add an error field that gets filled in if there's an error
