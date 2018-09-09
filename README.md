@@ -1,4 +1,4 @@
-# Tiny App - Link Shortener v0.9.0
+# Tiny App - Link Shortener v0.9.4
 
 Tiny App is a full stack web application built with Node and Express that allows users to shorten long url's.
 
@@ -15,6 +15,7 @@ This section is currently under development as we're fixing up the last few bugs
 -body-parser
 -cookie-session
 -bootstrap
+-method-override
 
 ## Getting Started
 
@@ -22,6 +23,10 @@ This section is currently under development as we're fixing up the last few bugs
 -Run the development web server using the `node express_server.js` command or the npm start command.
 
 ## Dev log
+
+v0.9.4-Tested each feature and removed any debugging code left over
+
+v0.9.3-Refactored the server into having Router methods and integrated proper REST protocols
 
 v0.9.2-Cleaned up the code and organized it into seperate, easier to read files and folders.
 
