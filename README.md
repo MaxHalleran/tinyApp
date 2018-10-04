@@ -4,7 +4,7 @@ Tiny App is a full stack web application built with Node and Express that allows
 
 ## Final project
 
-![Tiny App main page](https://github.com/MaxHalleran/tinyApp/blob/master/docs/index.png?raw=true)
+!["Tiny App main page"](https://github.com/MaxHalleran/tinyApp/blob/master/docs/index.png?raw=true)
 
 ![Tiny App login page](https://github.com/MaxHalleran/tinyApp/blob/master/docs/login.png?raw=true)
 
